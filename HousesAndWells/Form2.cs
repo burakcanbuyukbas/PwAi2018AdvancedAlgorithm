@@ -14,7 +14,7 @@ namespace HousesAndWells
     {
         List<Well> wells;
         List<House> houses;
-
+        List<Well> kwells;
 
         public Form2(List<House> houseList, List<Well> wellList)
         {
@@ -23,13 +23,12 @@ namespace HousesAndWells
             dataGridView2.AllowUserToAddRows = false;
 
 
-
+            //GUI related work
             var bindingListForWells = new BindingList<Well>(wellList);
             var wellSource = new BindingSource(bindingListForWells, null);
             dataGridView1.DataSource = wellSource;
             dataGridView1.Columns["x"].Visible = false;
             dataGridView1.Columns["y"].Visible = false;
-
             var bindingListForHouses = new BindingList<House>(houseList);
             var houseSource = new BindingSource(bindingListForHouses, null);
             dataGridView2.DataSource = houseSource;
@@ -37,51 +36,47 @@ namespace HousesAndWells
             dataGridView2.Columns["x"].Visible = false;
             dataGridView2.Columns["y"].Visible = false;
             dataGridView2.Columns["distanceFromWell"].Visible = false;
-            dataGridView1.Columns["connectedHousesString"].Visible = false;
+            dataGridView1.Columns["connectedHouseString"].Visible = false;
 
             wells = wellList;
             houses = houseList;
+            kwells = new List<Well>();
 
         }
 
         private void buttonOrganize_Click(object sender, EventArgs e)
         {
+            //GUI related
             dataGridView2.DataSource = null;
             dataGridView2.Visible = false;
             label2.Visible = false;
             dataGridView1.Width = dataGridView1.Width * 2;
-            dataGridView1.Columns["connectedHousesString"].Visible = true;
-            List<Well> sortedWells = new List<Well>();
-            List<House> connectedHouseList = new List<House>();
-            try
+            dataGridView1.Columns["connectedHouseString"].Visible = true;
+
+            //clone wells to get both sets with same size
+            int constant = houses.Count / wells.Count;
+            for (int i = 0; i < constant; i++)
             {
-                foreach (Well well in wells)
+                foreach (Well well in wells.ToList())
                 {
-                    connectedHouseList.Clear();
-                    foreach (House house in houses)
-                    {
-                        
-                        house.distanceFromWell = Math.Sqrt(((well.x - house.x) * (well.x - house.x) + (well.y - house.y) * (well.y - house.y)));
-
-                    }
-                    foreach (House house in houses.OrderBy(x => x.distanceFromWell).Take(3))//k number should replace with 3  BUG!
-                    {
-                        house.connectedWell = well;
-                        connectedHouseList.Add(house);
-                        houses.Remove(house);
-                    }
-                    well.connectedHouses = connectedHouseList;
-                    sortedWells.Add(well);//this fking list always get same result  BUG!
+                    Well cloneWell = new Well(well.Name);
+                    cloneWell.Id = wells.Max(x => x.Id) + 1;
+                    cloneWell.Name = well.Name;
+                    cloneWell.x = well.x;
+                    cloneWell.y = well.y;
+                    kwells.Add(cloneWell);
                 }
-                var bindingListForSortedWells = new BindingList<Well>(sortedWells);
-                dataGridView1.DataSource = bindingListForSortedWells;
-
             }
-            catch (Exception ex)
+            //fill preference list of wells
+            foreach (Well well in kwells)
             {
+                well.Prefs = houses.OrderBy(house => ((well.x - house.x) * (well.x - house.x) + (well.y - house.y) * (well.y - house.y))).ToList();
+            }
 
-                Console.WriteLine("**********EXCEPTION: {0}", e.ToString());
-                throw;
+            //fill preference list of houses
+            foreach (House house in houses)
+            {
+                house.Prefs = kwells.OrderBy(well => ((house.x - well.x) * (house.x - well.x) + (house.y - well.y) * (house.y - well.y))).ToList();
             }
 
         }

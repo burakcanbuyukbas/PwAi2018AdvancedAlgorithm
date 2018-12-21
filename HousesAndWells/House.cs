@@ -10,6 +10,8 @@ namespace HousesAndWells
     {
         public int Id { get; set; }
 
+        private int _matchingIndex { get; set; }
+
         public string Name { get; set; }
 
         public int x { get; set; }
@@ -20,8 +22,37 @@ namespace HousesAndWells
 
         public string Coordinates { get { return "(" + x + "," + y + ")"; } }
 
-        public double distanceFromWell { get; set; }
+        public List<Well> Prefs { get; set; }
 
+
+        public House(string name)
+        {
+            Name = name;
+            Prefs = null;
+            connectedWell = null;
+            _matchingIndex = 0;
+        }
+
+        public bool Prefers(Well h)
+        {
+            return Prefs.FindIndex(o => o == h) < Prefs.FindIndex(o => o == connectedWell);
+        }
+
+
+
+        public Well NextCandidateNotYetProposedTo()
+        {
+            if (_matchingIndex >= Prefs.Count) return null;
+            return Prefs[_matchingIndex++];
+        }
+
+        public void EngageTo(Well w)
+        {
+            if (w.connectedHouse != null) w.connectedHouse.connectedWell = null;
+            w.connectedHouse = this;
+            if (connectedWell != null) connectedWell.connectedHouse = null;
+            connectedWell = w;
+        }
 
     }
 }

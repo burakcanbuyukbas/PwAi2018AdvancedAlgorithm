@@ -66,7 +66,7 @@ namespace HousesAndWells
             var wellList = new List<Well>();
             for (int i = 1; i <= wells; i++)
             {
-                var well = new Well();
+                var well = new Well("Well" + i);
                 well.Id = i;
                 well.Name = "Well" + i;
                 well.x = rnd.Next(0, 99);
@@ -78,7 +78,7 @@ namespace HousesAndWells
             var houseList = new List<House>();
             for (int i = 1; i <= houses; i++)
             {
-                var house = new House();
+                var house = new House("House" + i);
                 house.Id = i;
                 house.Name = "House" + i;
                 house.x = rnd.Next(0, 99);
