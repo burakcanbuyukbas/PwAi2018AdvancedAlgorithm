@@ -20,6 +20,21 @@ namespace HousesAndWells
 
         public Well connectedWell { get; set; }
 
+        public string connectedWellName
+        {
+            get
+            {
+                if (connectedWell != null)
+                {
+                    return connectedWell.Name;
+                }
+                else
+                {
+                    return "";
+                }
+            }
+        }
+
         public string Coordinates { get { return "(" + x + "," + y + ")"; } }
 
         public List<Well> Prefs { get; set; }

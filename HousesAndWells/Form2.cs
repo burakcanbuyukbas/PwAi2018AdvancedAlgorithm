@@ -29,13 +29,15 @@ namespace HousesAndWells
             dataGridView1.DataSource = wellSource;
             dataGridView1.Columns["x"].Visible = false;
             dataGridView1.Columns["y"].Visible = false;
+            dataGridView1.Columns["connectedHouse"].Visible = false;
             var bindingListForHouses = new BindingList<House>(houseList);
             var houseSource = new BindingSource(bindingListForHouses, null);
             dataGridView2.DataSource = houseSource;
             dataGridView2.Columns["connectedWell"].Visible = false;
             dataGridView2.Columns["x"].Visible = false;
             dataGridView2.Columns["y"].Visible = false;
-            dataGridView2.Columns["distanceFromWell"].Visible = false;
+            dataGridView2.Columns["connectedWellName"].Visible = false;
+            //dataGridView2.Columns["distanceFromWell"].Visible = false;
             dataGridView1.Columns["connectedHouseString"].Visible = false;
 
             wells = wellList;
@@ -78,6 +80,36 @@ namespace HousesAndWells
             {
                 house.Prefs = kwells.OrderBy(well => ((house.x - well.x) * (house.x - well.x) + (house.y - well.y) * (house.y - well.y))).ToList();
             }
+
+
+            int freeHouseCount = houses.Count;
+            while (freeHouseCount > 0)
+            {
+                foreach (House house in houses)
+                {
+                    if (house.connectedWell == null)
+                    {
+                        Well well = house.NextCandidateNotYetProposedTo();
+                        if (well.connectedHouse == null)
+                        {
+                            house.EngageTo(well);
+                            freeHouseCount--;
+                        }
+                        else if (well.Prefers(house))
+                        {
+                            house.EngageTo(well);
+                        }
+                    }
+                }
+            }
+            var bindingListForMatchedHouses = new BindingList<House>(houses);
+            dataGridView1.DataSource = bindingListForMatchedHouses;
+            dataGridView1.Columns["x"].Visible = false;
+            dataGridView1.Columns["y"].Visible = false;
+            dataGridView1.Columns["connectedWell"].Visible = false;
+            dataGridView1.Columns["connectedWellName"].Visible = true;
+
+
 
         }
     }
