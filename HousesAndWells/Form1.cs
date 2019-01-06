@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -95,6 +97,74 @@ namespace HousesAndWells
             form.FormClosing += delegate { this.Show(); };
             form.Show();
             this.Hide();
+        }
+
+        private void fileInputButton_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = "Text files | *.txt"; // only txt files allowed
+            dialog.Multiselect = false; // no multi select
+            int counter = 0;
+            int wellCount = 0;
+            int constant = 0;
+            List<Well> wellList = new List<Well>();
+            List<House> houseList = new List<House>();
+
+            string line;
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                String path = dialog.FileName;
+                using (StreamReader reader = new StreamReader(new FileStream(path, FileMode.Open), new UTF8Encoding()))
+                {
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        if (counter == 0)
+                        {
+                            Int32.TryParse(line.Substring(0, 1), out wellCount);
+                            Int32.TryParse(line.Substring(1, 2), out constant);
+                        }
+                        else if(counter >= 1 && counter <= wellCount)
+                        {
+                            int x,y = 0;
+                            
+                            var matches = Regex.Matches(line, @"-?\d*\.{0,1}\d").Cast<Match>().Select(m => m.Value).ToArray();
+                            Int32.TryParse(matches[1], out x);
+                            Int32.TryParse(matches[2], out y);
+                            Well well = new Well("Well" + counter);
+                            well.Id = counter - 1;
+                            well.x = x;
+                            well.y = y;
+                            wellList.Add(well);
+                        }
+
+                        else if(counter > wellCount && counter <=  wellCount + wellCount * constant)
+                        {
+                            int x, y = 0;
+
+                            var matches = Regex.Matches(line, @"-?\d*\.{0,1}\d").Cast<Match>().Select(m => m.Value).ToArray();
+                            Int32.TryParse(matches[1], out x);
+                            Int32.TryParse(matches[2], out y);
+                            House house = new House("House" + (counter - wellCount));
+                            house.Id = counter - 1 - wellCount;
+                            house.x = x;
+                            house.y = y;
+                            houseList.Add(house);
+                        }
+                        counter++;
+                    }
+
+                    reader.Close();
+
+                    var form = new Form2(houseList, wellList);
+
+
+                    form.Location = this.Location;
+                    form.StartPosition = FormStartPosition.Manual;
+                    form.FormClosing += delegate { this.Show(); };
+                    form.Show();
+                    this.Hide();
+                }
+            }
         }
     }
 }

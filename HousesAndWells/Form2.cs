@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,6 +22,7 @@ namespace HousesAndWells
             InitializeComponent();
             dataGridView1.AllowUserToAddRows = false;
             dataGridView2.AllowUserToAddRows = false;
+            buttonOutput.Visible = false;
 
 
             //GUI related work
@@ -54,6 +56,8 @@ namespace HousesAndWells
             label2.Visible = false;
             dataGridView1.Width = dataGridView1.Width * 2;
             dataGridView1.Columns["connectedHouseString"].Visible = true;
+            buttonOrganize.Visible = false;
+            buttonOutput.Visible = true;
 
             //clone wells to get both sets with same size
             int constant = houses.Count / wells.Count;
@@ -111,6 +115,31 @@ namespace HousesAndWells
 
 
 
+        }
+
+        private void buttonOutput_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog save = new SaveFileDialog();
+            save.FileName = "MatchingResults.txt";
+            save.Filter = "Text File | *.txt";
+            if (save.ShowDialog() == DialogResult.OK)
+            {
+
+                StreamWriter writer = new StreamWriter(save.OpenFile());
+
+                for (int row = 0; row < dataGridView1.Rows.Count; row++)
+                {
+                    writer.WriteLine(dataGridView1.Rows[row].Cells[0].Value.ToString() + ". " 
+                        + dataGridView1.Rows[row].Cells[1].Value.ToString() + ": (" 
+                        +  dataGridView1.Rows[row].Cells[2].Value.ToString() + ","
+                        + dataGridView1.Rows[row].Cells[3].Value.ToString() + ") --> "
+                        + dataGridView1.Rows[row].Cells[5].Value.ToString());
+                }
+
+                writer.Dispose();
+                writer.Close();
+
+            }
         }
     }
 }

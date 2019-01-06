@@ -33,6 +33,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.buttonOrganize = new System.Windows.Forms.Button();
+            this.buttonOutput = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.SuspendLayout();
@@ -81,11 +82,22 @@
             this.buttonOrganize.UseVisualStyleBackColor = true;
             this.buttonOrganize.Click += new System.EventHandler(this.buttonOrganize_Click);
             // 
+            // buttonOutput
+            // 
+            this.buttonOutput.Location = new System.Drawing.Point(371, 435);
+            this.buttonOutput.Name = "buttonOutput";
+            this.buttonOutput.Size = new System.Drawing.Size(192, 53);
+            this.buttonOutput.TabIndex = 5;
+            this.buttonOutput.Text = "Save Output as File";
+            this.buttonOutput.UseVisualStyleBackColor = true;
+            this.buttonOutput.Click += new System.EventHandler(this.buttonOutput_Click);
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(941, 520);
+            this.Controls.Add(this.buttonOutput);
             this.Controls.Add(this.buttonOrganize);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -107,5 +119,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button buttonOrganize;
+        private System.Windows.Forms.Button buttonOutput;
     }
 }
