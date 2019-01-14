@@ -16,6 +16,7 @@ namespace HousesAndWells
         List<Well> wells;
         List<House> houses;
         List<Well> kwells;
+        double totalDistance;
 
         public Form2(List<House> houseList, List<Well> wellList)
         {
@@ -23,7 +24,7 @@ namespace HousesAndWells
             dataGridView1.AllowUserToAddRows = false;
             dataGridView2.AllowUserToAddRows = false;
             buttonOutput.Visible = false;
-
+            labelTotalDistance.Visible = false;
 
             //GUI related work
             var bindingListForWells = new BindingList<Well>(wellList);
@@ -112,8 +113,13 @@ namespace HousesAndWells
             dataGridView1.Columns["y"].Visible = false;
             dataGridView1.Columns["connectedWell"].Visible = false;
             dataGridView1.Columns["connectedWellName"].Visible = true;
-
-
+            foreach (var house in houses)
+            {
+                totalDistance += Math.Sqrt((house.x - house.connectedWell.x) * (house.x - house.connectedWell.x)
+                    + (house.y - house.connectedWell.y) * (house.y - house.connectedWell.y));
+            }
+            labelTotalDistance.Visible = true;
+            labelTotalDistance.Text = "Total Distance: " + totalDistance.ToString();
 
         }
 
@@ -135,7 +141,7 @@ namespace HousesAndWells
                         + dataGridView1.Rows[row].Cells[3].Value.ToString() + ") --> "
                         + dataGridView1.Rows[row].Cells[5].Value.ToString());
                 }
-
+                writer.WriteLine("Total Distance: " + totalDistance.ToString());
                 writer.Dispose();
                 writer.Close();
 

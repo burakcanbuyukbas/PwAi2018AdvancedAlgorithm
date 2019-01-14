@@ -34,6 +34,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.buttonOrganize = new System.Windows.Forms.Button();
             this.buttonOutput = new System.Windows.Forms.Button();
+            this.labelTotalDistance = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.SuspendLayout();
@@ -92,11 +93,21 @@
             this.buttonOutput.UseVisualStyleBackColor = true;
             this.buttonOutput.Click += new System.EventHandler(this.buttonOutput_Click);
             // 
+            // labelTotalDistance
+            // 
+            this.labelTotalDistance.AutoSize = true;
+            this.labelTotalDistance.Location = new System.Drawing.Point(12, 417);
+            this.labelTotalDistance.Name = "labelTotalDistance";
+            this.labelTotalDistance.Size = new System.Drawing.Size(35, 13);
+            this.labelTotalDistance.TabIndex = 6;
+            this.labelTotalDistance.Text = "label3";
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(941, 520);
+            this.Controls.Add(this.labelTotalDistance);
             this.Controls.Add(this.buttonOutput);
             this.Controls.Add(this.buttonOrganize);
             this.Controls.Add(this.label2);
@@ -120,5 +131,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button buttonOrganize;
         private System.Windows.Forms.Button buttonOutput;
+        private System.Windows.Forms.Label labelTotalDistance;
     }
 }

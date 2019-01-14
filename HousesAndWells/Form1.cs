@@ -120,8 +120,8 @@ namespace HousesAndWells
                     {
                         if (counter == 0)
                         {
-                            Int32.TryParse(line.Substring(0, 1), out wellCount);
-                            Int32.TryParse(line.Substring(1, 2), out constant);
+                            Int32.TryParse(line.Split(null)[0], out wellCount);
+                            Int32.TryParse(line.Split(null)[1], out constant);
                         }
                         else if(counter >= 1 && counter <= wellCount)
                         {
@@ -152,7 +152,6 @@ namespace HousesAndWells
                         }
                         counter++;
                     }
-
                     reader.Close();
 
                     var form = new Form2(houseList, wellList);
