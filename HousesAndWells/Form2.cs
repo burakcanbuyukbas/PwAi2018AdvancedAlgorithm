@@ -59,6 +59,12 @@ namespace HousesAndWells
             buttonOrganize.Visible = false;
             buttonOutput.Visible = true;
 
+            //fill preference list of wells
+            foreach (Well well in wells)
+            {
+                well.Prefs = houses.OrderBy(house => ((well.x - house.x) * (well.x - house.x) + (well.y - house.y) * (well.y - house.y))).ToList();
+            }
+
             //clone wells to get both sets with same size
             int constant = houses.Count / wells.Count;
             for (int i = 0; i < constant; i++)
@@ -66,23 +72,19 @@ namespace HousesAndWells
                 foreach (Well well in wells.ToList())
                 {
                     Well cloneWell = new Well(well.Name);
-                    cloneWell.Id = wells.Max(x => x.Id) + 1;
+                    cloneWell.Id = kwells.Count == 0 ? 0 : kwells.Max(x => x.Id) + 1;
                     cloneWell.Name = well.Name;
                     cloneWell.x = well.x;
                     cloneWell.y = well.y;
+                    cloneWell.Prefs = well.Prefs;
                     kwells.Add(cloneWell);
                 }
-            }
-            //fill preference list of wells
-            foreach (Well well in kwells)
-            {
-                well.Prefs = houses.OrderBy(house => ((well.x - house.x) * (well.x - house.x) + (well.y - house.y) * (well.y - house.y))).ToList();
             }
 
             //fill preference list of houses
             foreach (House house in houses)
             {
-                house.Prefs = kwells.OrderBy(well => ((house.x - well.x) * (house.x - well.x) + (house.y - well.y) * (house.y - well.y))).ToList();
+                house.Prefs = wells.OrderBy(well => ((house.x - well.x) * (house.x - well.x) + (house.y - well.y) * (house.y - well.y))).ToList();
             }
 
             ////Commented out to implement new matching algorithm
@@ -109,21 +111,23 @@ namespace HousesAndWells
             //    }
             //}
 
+            //RunMatching(houses, kwells); //algorithm v2
 
-            RunMatching(houses, kwells); //algorithm v2
+            RunMatching(kwells, houses); //algorithm v2
             var bindingListForMatchedHouses = new BindingList<House>(houses);
             dataGridView1.DataSource = bindingListForMatchedHouses;
             dataGridView1.Columns["x"].Visible = false;
             dataGridView1.Columns["y"].Visible = false;
             dataGridView1.Columns["connectedWell"].Visible = false;
             dataGridView1.Columns["connectedWellName"].Visible = true;
-            foreach (var well in kwells)
+            foreach (var house in houses)
             {
-                totalDistance += (decimal)(Math.Sqrt((well.x - well.connectedHouse.x) * (well.x - well.connectedHouse.x)
-                    + (well.y - well.connectedHouse.y) * (well.y - well.connectedHouse.y)));
+                totalDistance += (decimal)(Math.Sqrt((house.x - house.connectedWell.x) * (house.x - house.connectedWell.x)
+                    + (house.y - house.connectedWell.y) * (house.y - house.connectedWell.y)));
             }
             labelTotalDistance.Visible = true;
             labelTotalDistance.Text = "Total Distance: " + totalDistance.ToString();
+
 
         }
 
@@ -152,16 +156,16 @@ namespace HousesAndWells
             }
         }
 
-        //Matching Algorithm v2
-        private static void RunMatching(List<House> wells, List<Well> houses)
+        //Matching Algorithm v2 --Works
+        private static void RunMatching(List<Well> wells, List<House> houses)
         {
             foreach (var well in wells)
             {
-                var matchings = new List<Well>();
-                while (well.connectedWell == null)
+                var matchings = new List<House>();
+                while (well.connectedHouse == null)
                 {
                     var foundMatch = false;
-                    Well match = null;
+                    House match = null;
                     while (!foundMatch)
                     {
                         match = houses.Find(x => x == well.Prefs.First());
@@ -172,19 +176,19 @@ namespace HousesAndWells
                             MoveFirstElementToEnd(well.Prefs);
                     }
 
-                    if (match.connectedHouse == null)
+                    if (match.connectedWell == null)
                         MarkAsMatched(well, match);
 
                     else
                     {
                         // --Compare preference of current match and new match, cancelling the current match out if the potential match is a higher preference
-                        var currentMatchIndex = match.Prefs.IndexOf(match.connectedHouse);
+                        var currentMatchIndex = match.Prefs.IndexOf(match.connectedWell);
                         var potentialMatchIndex = match.Prefs.IndexOf(well);
 
                         if (potentialMatchIndex < currentMatchIndex)
                         {
-                            var currentMatch = wells.Find(m => m == match.connectedHouse);
-                            currentMatch.connectedWell = null;
+                            var currentMatch = wells.Find(m => m == match.connectedWell);
+                            currentMatch.connectedHouse = null;
                             MarkAsMatched(well, match);
                         }
                         else
@@ -193,9 +197,10 @@ namespace HousesAndWells
                 }
             }
             // --Recursively run through the program if not all of the proposing group is matched (i.e. if someone had their match taken away from them)
-            if (wells.Any(m => m.connectedWell == null))
+            if (wells.Any(m => m.connectedHouse == null))
                 RunMatching(wells, houses);
         }
+
         private static void MoveFirstElementToEnd<T>(List<T> list) where T : class
         {
             var temp = list[0];
@@ -206,7 +211,16 @@ namespace HousesAndWells
         {
             house.connectedWell = well;
             well.connectedHouse = house;
+
         }
+
+        private static void MarkAsMatched(Well well, House house)
+        {
+            house.connectedWell = well;
+            well.connectedHouse = house;
+        }
+
+
 
     }
 

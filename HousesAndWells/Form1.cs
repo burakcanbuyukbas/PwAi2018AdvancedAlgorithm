@@ -126,11 +126,13 @@ namespace HousesAndWells
                         else if(counter >= 1 && counter <= wellCount)
                         {
                             int x,y = 0;
-                            
-                            var matches = Regex.Matches(line, @"-?\d*\.{0,1}\d").Cast<Match>().Select(m => m.Value).ToArray();
-                            Int32.TryParse(matches[1], out x);
-                            Int32.TryParse(matches[2], out y);
-                            Well well = new Well("Well" + counter);
+                            Well well = new Well(line.Split(null)[0]);
+                            line.Split(null)[0] = well.Name;
+                            Int32.TryParse(line.Split(null)[1], out x);
+                            Int32.TryParse(line.Split(null)[2], out y);
+                            //var matches = Regex.Matches(line, @"-?\d*\.{0,1}\d").Cast<Match>().Select(m => m.Value).ToArray();
+                            //Int32.TryParse(matches[1], out x);
+                            //Int32.TryParse(matches[2], out y);
                             well.Id = counter - 1;
                             well.x = x;
                             well.y = y;
@@ -140,12 +142,14 @@ namespace HousesAndWells
                         else if(counter > wellCount && counter <=  wellCount + wellCount * constant)
                         {
                             int x, y = 0;
-
-                            var matches = Regex.Matches(line, @"-?\d*\.{0,1}\d").Cast<Match>().Select(m => m.Value).ToArray();
-                            Int32.TryParse(matches[1], out x);
-                            Int32.TryParse(matches[2], out y);
-                            House house = new House("House" + (counter - wellCount));
-                            house.Id = counter - 1 - wellCount;
+                            House house = new House(line.Split(null)[0]);
+                            line.Split(null)[0] = house.Name;
+                            Int32.TryParse(line.Split(null)[1], out x);
+                            Int32.TryParse(line.Split(null)[2], out y);
+                            //var matches = Regex.Matches(line, @"-?\d*\.{0,1}\d").Cast<Match>().Select(m => m.Value).ToArray();
+                            //Int32.TryParse(matches[1], out x);
+                            //Int32.TryParse(matches[2], out y);
+                            //house.Id = counter - 1 - wellCount;
                             house.x = x;
                             house.y = y;
                             houseList.Add(house);
